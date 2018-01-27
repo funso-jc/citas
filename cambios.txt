@@ -1,0 +1,688 @@
+cambios
+* update obreros set ingreso='1001-01-01' where ingreso is null;
+* update obreros set fnacim='1001-01-01' where fnacim is null;
+* ALTER TABLE `obreros` CHANGE `zon_emp` `zon_emp` VARCHAR(20) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL;
+* ALTER TABLE `obreros` ADD `mail` VARCHAR(80) NOT NULL AFTER `trabajo`, ADD `celular2` VARCHAR(11) NOT NULL AFTER `mail`, ADD `ip_nuevo` VARCHAR(60) NOT NULL AFTER `celular2`, ADD `ip_modifica` VARCHAR(60) NOT NULL AFTER `ip_nuevo`, ADD `ultima_act` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP AFTER `ip_modifica`, ADD `lacedula` INT(10) NOT NULL AFTER `ultima_act`;
+* ALTER TABLE `obreros` CHANGE `stat_emp` `stat_emp` VARCHAR(20) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL;
+
+* colocar las cedulas de  titulares con 0 a la izq
+SELECT cedula FROM `obreros` WHERE length(trim(cedula))=7;
+update obreros set cedula=concat('0',trim(cedula)) WHERE length(trim(cedula))=7;
+update obreros set cedula=concat('00',trim(cedula)) WHERE length(trim(cedula))=6;
+update obreros set cedula=concat('000',trim(cedula)) WHERE length(trim(cedula))=5;
+
+* colocar las cedulas de  titulares en familiares con 0 a la izq
+SELECT cedula FROM `familiar` WHERE length(trim(cedula))=7;
+update familiar set cedula=concat('0',trim(cedula)) WHERE length(trim(cedula))=7;
+update familiar set cedula=concat('00',trim(cedula)) WHERE length(trim(cedula))=6;
+update familiar set cedula=concat('000',trim(cedula)) WHERE length(trim(cedula))=5;
+update familiar set fecha_nac='1001-01-01' where fecha_nac is null;
+ALTER TABLE `familiar` ADD `ip_nuevo` VARCHAR(60) NOT NULL AFTER `id_familiar`, ADD `ip_modifica` VARCHAR(60) NOT NULL AFTER `ip_nuevo`, ADD `registrado` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP AFTER `ip_modifica`;
+ALTER TABLE `familiar` CHANGE `sexo` `sexo` VARCHAR(10) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL;
+ALTER TABLE `familiar` CHANGE `parentesco` `parentesco` VARCHAR(10) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL;
+
+
+////////////
+DROP TABLE IF EXISTS `configura`;
+CREATE TABLE `configura` (
+  `cparametro` varchar(20) NOT NULL,
+  `cvalor` varchar(40) NOT NULL,
+  `id_valores` bigint(10) NOT NULL,
+  `activado` tinyint(1) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+ALTER TABLE `configura`
+  ADD UNIQUE KEY `id_valores` (`id_valores`);
+
+ALTER TABLE `configura`
+  MODIFY `id_valores` bigint(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=80;
+INSERT INTO `configura` (`cparametro`, `cvalor`, `id_valores`, `activado`) VALUES
+('Civil', 'Soltero', 2, 1),
+('Civil', 'Casado', 3, 1),
+('Civil', 'Viudo', 4, 1),
+('Civil', 'Divorciado', 5, 1),
+('Civil', 'Concubinato', 6, 1),
+('Estatus', 'Activo', 7, 1),
+('Estatus', 'Jubilado', 8, 1),
+('Estatus', 'Retirado', 9, 1),
+('Cargo', 'VIGILANTE', 10, 1),
+('Cargo', 'Aseador', 11, 1),
+('Cargo', 'Portero', 12, 1),
+('Zona', 'Administracion', 13, 1),
+('Zona', 'Yaritagua', 14, 1),
+('Zona', 'Tocuyo', 15, 1),
+('Parentesco', 'Padre', 16, 1),
+('Parentesco', 'Madre', 17, 1),
+('Parentesco', 'Conyuge', 18, 1),
+('Parentesco', 'Hijo', 19, 1),
+('Parentesco', 'HijoEsp', 20, 1),
+('Motivo', 'Cita', 21, 1),
+('Motivo', 'Emergencia', 22, 1),
+('Motivo', 'Triaje', 23, 1),
+('Motivo', 'Administrativa', 24, 1),
+('Motivo', 'Inasistencia', 25, 1),
+('Caracteristica', 'Especialista', 26, 1),
+('Caracteristica', 'Laboratorio', 27, 1),
+('Caracteristica', 'Clinica', 28, 1),
+('Caracteristica', 'Farmacia', 29, 1),
+('NroPacientes', '3', 30, 1),
+('Notificacion', 'Diarrea', 31, 1),
+('Notificacion', 'Gripe', 32, 1),
+('Notificacion', 'Rubeola', 33, 1),
+('Notificacion', '', 34, 1),
+('Recipe', 'H. Resto del tratamiento igual', 64, 1),
+('Recipe', 'G. Tratamiento permanente', 63, 1),
+('Recipe', 'F. Favor realizar EKG antes de la proxim', 62, 1),
+('Recipe', 'E. Favor dar cupo circunstancial para el', 61, 1),
+('Recipe', 'D. Favor traer este recipe la proxima ci', 60, 1),
+('Recipe', 'C. Favor realizar curva de presion arter', 59, 1),
+('Referencia', 'H. Perfil Lipidico', 72, 1),
+('Referencia', 'G. Hematologia Completa', 71, 1),
+('Referencia', 'F. EcoCardiograma', 70, 1),
+('Referencia', 'E. US Prostatico', 69, 1),
+('Referencia', 'D. US Mamario', 68, 1),
+('Referencia', 'C. US Abdominal', 67, 1),
+('Referencia', 'B. US Pelvico', 66, 1),
+('Referencia', 'A. Consulta', 65, 1),
+('Recipe', 'B. Venir 10 dias antes de la proxima cit', 58, 1),
+('Recipe', 'A. Favor dar cita al haber cupo', 57, 1),
+('Referencia', 'I. Examen Orina', 73, 1),
+('Referencia', 'J. Examen Heces', 74, 1),
+('Referencia', 'K. Glicemia Basal', 75, 1),
+('Constancia', 'A. Asistio hoy a consulta', 76, 1),
+('Constancia', 'B. Acompañando a su familiar', 77, 1),
+('Constancia', 'C. Constancia de niño sano', 78, 1),
+('Referencia', '', 79, 1);
+////////////
+
+DROP TABLE IF EXISTS `ninstituto`;
+CREATE TABLE IF NOT EXISTS `ninstituto` (
+  `codmed` varchar(12) NOT NULL,
+  `instituto` varchar(120) NOT NULL,
+  `msas` varchar(5) NOT NULL,
+  `colegio` varchar(5) NOT NULL,
+  `direccion` varchar(60) NOT NULL,
+  `direccion2` varchar(60) NOT NULL,
+  `codesp` varchar(3) NOT NULL,
+  `horario` varchar(40) NOT NULL,
+  `horario2` varchar(40) NOT NULL,
+  `tipo` varchar(15) NOT NULL,
+  `status` int(11) NOT NULL,
+  `iva` int(11) NOT NULL,
+  `ip_nuevo` varchar(40) NOT NULL,
+  `pc` varchar(40) NOT NULL,
+  `realizado` datetime NOT NULL,
+  `id_registro` bigint(20) NOT NULL AUTO_INCREMENT,
+  `email` varchar(120) NOT NULL,
+  `cuentabanco` varchar(20) NOT NULL,
+  `telefonos` varchar(80) NOT NULL,
+  `celular` varchar(11) NOT NULL,
+  `nomfiscal` varchar(80) NOT NULL,
+  `dirfiscal1` varchar(80) NOT NULL,
+  `dirfiscal2` varchar(80) NOT NULL,
+  `celularpago` varchar(11) NOT NULL,
+  `ip_modifica` varchar(60) NOT NULL,
+  PRIMARY KEY (`id_registro`),
+  KEY `codmed` (`codmed`),
+  KEY `codmed_2` (`codmed`),
+  KEY `codmed_3` (`codmed`)
+) ENGINE=MyISAM AUTO_INCREMENT=135 DEFAULT CHARSET=latin1;
+
+--
+-- Volcado de datos para la tabla `ninstituto`
+--
+
+INSERT INTO `ninstituto` (`codmed`, `instituto`, `msas`, `colegio`, `direccion`, `direccion2`, `codesp`, `horario`, `horario2`, `tipo`, `status`, `iva`, `ip_nuevo`, `pc`, `realizado`, `id_registro`, `email`, `cuentabanco`, `telefonos`, `celular`, `nomfiscal`, `dirfiscal1`, `dirfiscal2`, `celularpago`, `ip_modifica`) VALUES
+('V04411691', 'CHARIFE DE MENDOZA, MILAGROS.', '', '', 'CLINICA RAZETTI, CALLE 27/CARR. 21 Y 22, TLF. 2319077', '', '024', '8 A.M. A 12 M. Y DE 4 A 7 P.M.', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 1, '', '', '', '', '', '', '', '', ''),
+('V11788462', 'GRANADOS, JULIO A.', '', '', 'CENTRO PROF. ROSANCAR FRENTE AL C.C. ARCA PISO 3 TLF.2334459', '', '011', '7 A 11AM. Y 4PM A 6PM.ORDEN DE LLEGAD', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 2, '', '', '', '', '', '', '', '', ''),
+('V04068813', 'CASTILLO DUGARTE, ALFONSO.', '', '', 'POLICL. BARQUISIMETO, AV. LOS LEONES, TLF.2540044', '', '014', '10 A 12 M.', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 3, '', '', '', '', '', '', '', '', ''),
+('V03859631', 'NAIM A., BRAJIM.', '', '', 'CLINICA ACOSTA ORTIZ, CARRERA 19 CON CALLE 31, TLF.2328811', 'TLF 2312654', '006', '8AM A 1PM. LUN. A VIERN. PREVIA CITA', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 4, '', '', '', '', '', '', '', '', ''),
+('V07321394', 'SABA K., SAMIR.', '', '', 'CLINICA LA CANDELARIA AV. CARABOBO/CARRERA 27 Y 28 PB 232349', '', '024', '2:00-6PM.LUN.-VIERN.ORD/LLEG.0416651777', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 5, '', '', '', '', '', '', '', '', ''),
+('V01472029', 'CARPIO LOPEZ, JUAN REGULO', '', '', 'CONSULTORIOS INTEGRALES, AV. LARA / CALLES 6 Y 7.TLF.2513494', '', '008', '3 P.M. A 7 P.M. PREVIA CITA LUN.A VIERN.', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 6, '', '', '', '', '', '', '', '', ''),
+('V03082756', 'GONZALEZ, CIRO.', '', '', 'NUCLEO ,MORAN', '', '015', '', '', 'Especialista', 1, 1, '', '', '1001-01-01 00:00:00', 7, '', '', '', '', '', '', '', '', ''),
+('V05253237', 'QUINTERO R., GUSTAVO.', '', '', 'CLINICA RAZETTI CARR.21 ESQ.CALLE27 CONSULT.662 PISO 6', '', '023', 'LUN-VIERN. 1-4PM TEL.7105744-04143503592', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 8, '', '', '', '', '', '', '', '', ''),
+('V04705039', 'MOLERO FABIANI, ALI.', '', '', 'C.C. ALFA OF.#49 LUN A VIER 2-6PM TEL.04166501986-2545198', '', '017', 'POL.CABUDARE L,MART,J,V 8-10AM TE.633312', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 9, '', '', '', '', '', '', '', '', ''),
+('V02572783', 'ALVAREZ AMENGUAL, CARLOS.', '', '', 'POL. BARQUISIMETO, AV. LOS LEONES, TLF. 2562161', '', '010', '10AM A 12M  Y  3PM  A 6PM LUN.A VIE.', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 10, '', '', '', '', '', '', '', '', ''),
+('V00231301', 'MARANTE OVIEDO, RAFAEL.', '', '', 'POLICLINICA BARQUISIMETO, 2540044', '', '021', '8:A.M. A 12 M.LUN. A VIERN PREVIA CITA', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 11, '', '', '', '', '', '', '', '', ''),
+('V03916899', 'GUEVARA DE DALO, SHIRLLEY CARMEN', '', '', 'EDF. RODMONT, CALLE 8/CARR. 21 Y 22, PISO 2 #8, TLF.2524294', '', '023', '2:30 A 7 P.M. LUN. A VIERN.', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 12, '', '', '', '', '', '', '', '', ''),
+('V07347057', 'SANCHIS, ROSA MARIA.', '', '', 'EDIF.ROSANCAR,CARR.31.ESQ.CALL.20 PISO 2 TEF. 2321454', '', '023', '3 A 7PM. LUN A VIERN. ORD/LLEG.', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 13, '', '', '', '', '', '', '', '', ''),
+('V05248703', 'RIVERO DE PINEDA, ZULLY.', '', '', '(1)ACOSTA ORTIZ.CARR.19/30Y31 2325116 (2)POL.CABUDARE 263331', '', '009', '[(1)1:30-4:30PM (2)9-12M.] L-V.PREV.CITA', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 14, '', '', '', '', '', '', '', '', ''),
+('V04167427', 'USECHE C. EMERSON.', '', '', 'CLINICA RAZETTI, CALLE 27/CARR. 21 Y 22,TLF.7105764-7105765', '', '012', '2 A 7 P.M. LUN. A VIER.   TLF. 312735', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 15, '', '', '', '', '', '', '', '', ''),
+('J-08510758-4', 'LABORATORIO CLINICO MEJIAS', '', '', '', '', '031', '', '', 'Laboratorio', 1, 1, '', '', '1001-01-01 00:00:00', 16, '', '', '', '', '', '', '', '', ''),
+('V04342758', 'GRANDA, RAFAEL.', '', '', 'SARARE  TELEFONO: 921628', '', '004', '9-12M. LUNES A VIERNES', '', 'Especialista', 1, 1, '', '', '1001-01-01 00:00:00', 17, '', '', '', '', '', '', '', '', ''),
+('V04383627', 'GONZALEZ. DE CASTILLO, MARIELLA.', '', '', 'POLICLINICA BARQUISIMETO, TLF. 2533621 - 2540044', '', '029', '8 A 10 A.M. Y 4 A 6 P.M.LUN. A VIERN.', '', 'Especialista', 1, 1, '', '', '1001-01-01 00:00:00', 18, '', '', '', '', '', '', '', '', ''),
+('V03540483', 'YEPEZ DE GONZALEZ, MARIA S.', '', '', 'CLINICA ACOSTA ORTIZ, TLF. 2329651, EXT. 167', '', '024', '3PM. A 6PM.', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 19, '', '', '', '', '', '', '', '', ''),
+('V04065783', 'PEREZ SISIRUCA, RAMON.', '16675', '1151', 'CLINICA ACOSTA ORTIZ  TEL. 2328811 EXT.2170', 'CLINICA RAZETTI EDIF. ANEXO CONS.10 TEL.7105768', '021', 'LUN-MIER-VIER 9-11:30AM-MART 10-11:30AM', 'MAR-JUEV-SAB. 7-9:30AM', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 20, '', '', '', '', '', '', '', '', ''),
+('V03941810', 'GONZALEZ DE M.MERCEDES.', '', '', 'CLINICA DE OJOS, CALLE 13 /CARR. 18 Y 19, TLF. 2523636', '', '005', '9 A 12 M. Y 5 P.M. A 7 P.M. .PREVIA CITA', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 21, '', '', '', '', '', '', '', '', ''),
+('V02381065', 'MONTES DE OCA A., NELSON.', '', '', 'CLINICA DE OJOS, CALLE 13 CARR. 18 Y 19, TLF.2523636', '', '005', 'LUNES A VIERNES 9AM-A 12M.PREVIA CITA', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 22, '', '', '', '', '', '', '', '', ''),
+('J-08510839-4', 'LABORATORIO DORANTE.S.R.L.', '', '', 'AV. VARGAS (REDOMA)  TELEFONO: 2523289', '', '031', '7AM. A 5:30PM  LUNES A VIERNES', '', 'Laboratorio', 1, 2, '', '', '1001-01-01 00:00:00', 23, '', '', '', '', '', '', '', '', ''),
+('V03140750', 'BALZA MALAVER, VALDEMAR.', '', '', 'EDIF. SANTA ANA CARRERA 19 CON CALLE 13 TEF. 2524945', '', '035', 'LUN. A VIER. 8AM-12M  2PM-5PM', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 24, '', '', '', '', '', '', '', '', ''),
+('V04064969', 'ROJAS TUA., EIVAR.', '', '', 'CENTRO MEDICO AVILA, CARR. 17 C/C 19, TLF. 2313128-2316130', 'CALLE 41/CARR.20 Y 21 CENTRO MEDICO DE ONCOLOGIA TEL.4460261', '007', '10AM A 12M. LUN,MIERC.Y VIERN. ORD/LLEG', 'LUNES-VIERNES 4PM-6PM TEL.4461396', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 25, '', '', '', '', '', '', '', '', ''),
+('V03665778', 'FUENTES, ROSALINDA.', '', '', 'CTR. COMERCIAL EL PARRAL. PISO 2 OFC. 204. TLF.  2542646', '', '018', '3 P.M.  A  7 P.M. LUNES A VIERNES', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 26, '', '', '', '', '', '', '', '', ''),
+('V03084990', 'VILLARREAL.P., FREDDY J.', '', '', 'CLINICA LAS MERCEDES, CALLE 20 / CARR. 18 Y 19, TLF. 2321496', '', '024', 'DE 3.A.5PM.DE LUNES A VIERNES.ORDEN.LLEG', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 27, '', '', '', '', '', '', '', '', ''),
+('V03864512', 'DIAZ DE ROCHA.,TERESITA.', '', '', 'POLICL. BARQUISIMETO, AV. LOS LEONES, TLF. 2534021', '', '010', '3 A 6 P.M. LUN. A VIERN. ORDEN LLEGADA', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 28, '', '', '', '', '', '', '', '', ''),
+('V04722882', 'BUSTILLOS, ROSARIO.', '', '', 'CLIN. LOS SAUCES AV.CARABOBO-AV.VENEZUELA Y CARR.27 2233490', '', '020', '4PM-7PM LUN. A JUEV. ORDEN DE LLEGADA', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 29, '', '', '', '', '', '', '', '', ''),
+('V04724160', 'FRONTE, ANTONIO.', '', '', 'POLIC. CONCEPCION, CALLE. 57 CON CARR. 19, TLF. 4421667', '', '023', '9.A.12M.DE LUNES.A.VIERNES.', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 30, '', '', '', '', '', '', '', '', ''),
+('V01438180', 'MELENDEZ, AGUSTIN JAVIER.', '', '', 'NUCLEO TORRES', '', '003', '', '', 'Especialista', 1, 1, '', '', '1001-01-01 00:00:00', 31, '', '', '', '', '', '', '', '', ''),
+('V04325671', 'TERAN PEREZ, JESUS E.', '', '', 'C.C. EL PARRAL, PISO 2, OFC # 210, TLF. 2542545  2541986', '', '006', '2 A 5 P.M. LUN A VIERN.  PREVIA CITA', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 32, '', '', '', '', '', '', '', '', ''),
+('V07348395', 'MINDIOLA MADRIZ, MANUEL.', '', '', 'CENTRO ALFA 2 PISO ALA ESTE CONS.40  TELF.0416-6513932', '', '012', 'LUN,MIERC Y VIERNES 10AM-12:30PM', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 33, '', '', '', '', '', '', '', '', ''),
+('V08925335', 'MARTINEZ FIGUERA, RAFAEL.', '', '', 'POLIC. BARQUISIMETO, AV. LOS LEONES, TLF. 2540044', '', '007', 'LUNES.A.JUEVES.2.A.6PM.VIER.9A2PM.P.CITA', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 34, '', '', '', '', '', '', '', '', ''),
+('V04970004', 'VALERA OCHOA, EMILIA .', '', '', 'CALL. 8 ENTRE CARR.21 Y 22 TELF. 2522410', '', '031', '8AM-12M. Y 2:00PM-6:00PM', '', 'Especialista', 1, 1, '', '', '1001-01-01 00:00:00', 35, '', '', '', '', '', '', '', '', ''),
+('V07392546', 'MANRESA. E., JUAN DE DIOS.', '', '', 'POLIC.SAN JAVIER AV.ANDRES BELLO /CRR 33 Y 34 TELF.7150372', '', '021', '3-6PM MART. A VIERN. TEL.2734812', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 36, '', '', '', '', '', '', '', '', ''),
+('J-08508074-0', 'SERVICIO PROFESIONAL DE OPTICA', '', '', 'CALLE 22 ENTRE 21 Y 22 TELFONO 2317487', '', '032', '8 A 12 M Y DE 230 A 6 PM LUN. A VIERN.', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 37, '', '', '', '', '', '', '', '', ''),
+('J-30010191-6', 'LABORATORIO RIENZI', '', '', 'AV.VENEZUELA CON AV.VARGAS EDIF. COLASANTE PISO 1 (2321168)', '', '031', '7AM. A 6PM.  LUNES A VIERNES', '', 'Laboratorio', 2, 1, '', '', '1001-01-01 00:00:00', 38, '', '', '', '', '', '', '', '', ''),
+('J-08508977-2', 'UNID MED FISICA Y REHABILITACION', '', '', 'CARRERA 21 ENTRE 55 Y 56 EDIF. CARALI PLANTA BAJA 4427013', '', '008', '8:OO AM A 12:OO M Y DE 2:OO PM A 6:00 PM', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 39, '', '', '', '', '', '', '', '', ''),
+('J-08534112-9', 'LABORATORIO TIRADO CASTRILLO', '', '', 'CARRERA 17 AV. VARGAS Y CALLE 19 TELEF. 2319335', '', '031', '7AM. A 7PM. LUN-VIER Y SAB.DE 8AM.-12M.', '', 'Laboratorio', 1, 2, '', '', '1001-01-01 00:00:00', 40, '', '', '', '', '', '', '', '', ''),
+('J-08512239-7', 'LABORATORIO CLINICO BRICE?O,C.A', '', '', 'CARRERA 21 ENTRE CALLES 55 Y 56 TORRE DE ESPECIALIDADES', 'C.C. LOS LEONES TLF. 2553194-2552815-2550450-2551602', '031', '7AM.-8PM.L-V.Y.7AM.-1PM.SAB. TLF 4429403', '', 'Laboratorio', 1, 2, '', '', '1001-01-01 00:00:00', 41, '', '', '', '', '', '', '', '', ''),
+('J-30188590-2', 'UNIDAD MASTOLOG.LA CONCEPCION CA', '', '', 'POLICLINICA LA CONCEPCION CARR. 19 CON CALL. 57', '', '040', '8AM-12M 2PM-6PM', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 42, '', '', '', '', '', '', '', '', ''),
+('J-08511190-5', 'POLICLINICA CABUDARE, C.A', '', '', 'CALLE.VICENTEAMENGUAL CON GUILLERMO ALVIZU  TEF. 2629051', '', '015', '8 A 12M. Y 2 A 6PM. LUN. A VIERN.', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 43, '', '', '', '', '', '', '', '', ''),
+('J-30012190-9', 'OSTEO DIAGNOSTICO C.A', '', '', 'CENTRO FINANC. LAS VEGAS AV.LARA PISO 1 TLF 2542501-2543134', '', '026', '', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 44, '', '', '', '', '', '', '', '', ''),
+('J-30090245-5', 'LABORATORIO COLINA REINOSO C.A.', '', '', 'AV.LISANDRO ALVARADO EL TOCUYO', '', '031', '', '', 'Laboratorio', 1, 2, '', '', '1001-01-01 00:00:00', 45, '', '', '', '', '', '', '', '', ''),
+('J-08517030-8', 'LABORATORIO MORAN', '', '', 'AV. MORAN ENTRE CARRERAS 22 Y 23 RESIDENSIAS MORAN A-6', '', '031', 'TLF. 2511270', '', 'Laboratorio', 1, 2, '', '', '1001-01-01 00:00:00', 46, '', '', '', '', '', '', '', '', ''),
+('V05323020', 'MELENDEZ R., NANCY MARLENE', '6071', '6371', 'CALLE EL CARMEN # 18-22 QTA.MI SUE?O CARORA', '', '013', '0252-2212240', '', 'Especialista', 1, 1, '', '', '1001-01-01 00:00:00', 47, '', '', '', '', '', '', '', '', ''),
+('V05240978', 'DAZA SKIDANENKO, MARIA IRINA', '30264', '', 'POLICLINICA BARQUISIMETO  PISO 1 CONS.#17  2562193-2540044', '', '009', 'LUN.A VIERNES 9AM-1PM Y  3PM-6PM', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 48, '', '', '', '', '', '', '', '', ''),
+('V07195717', 'ESPA?A F., ARTURO A.', '36524', '3788', 'CLINICA LAS MERCEDES CALLE 20 ENTRE 18 Y 19 OFICINA 2', '', '039', 'MARTES,JUEVES,VIERNES 5:30PM-6:30PM', '', 'Especialista', 1, 1, '', '', '1001-01-01 00:00:00', 49, '', '', '', '', '', '', '', '', ''),
+('V04068744', 'MARIN, YOCASTA', '34748', '21', 'GRUPO MEDICO RODMONT CALLE 8 /CARRERAS 21 Y 22 CONSUL.  2', 'PREVIA CITA.    CEL.014-5132020', '038', 'LUN-VIER 2-6PM.TELF. 2521056-2521024', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 50, '', '', '', '', '', '', '', '', ''),
+('J-30218139-9', 'CLINICA PADRE TORRES.C.A.', '', '', 'YARITAGUA AV.PADRE TORRES.NO.16-6 TELEF.2622768', '', '003', '', '', 'Especialista', 1, 1, '', '', '1001-01-01 00:00:00', 51, '', '', '', '', '', '', '', '', ''),
+('V09541210', 'TORREALBA U. JOSE', '36059', '2904', 'CENTRO PROF. ARCA(TLF. 332166)', '', '024', 'LUNES A VIERNES 1PM A 4PM', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 52, '', '', '', '', '', '', '', '', ''),
+('V04454961', 'SOSA ANTONIO', '14480', '806', 'POLICLINICA BARQUISIMETO TELEFONO:2559736', '', '007', '10:00AM. A 2:00PM.', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 53, '', '', '', '', '', '', '', '', ''),
+('V06912222', 'ARISTEGUIETA INDIRA', '42185', '4900', 'CENTRO ALFA, AV.MADRID PISO 1 CONS.N?41 TELF.2550457', 'CENTRO ALFA, AV.MADRID PISO 1 CONS.N 41 TELF. 2550457', '005', 'LUNES A VIERNES 8AM A 1PM', 'MARTES A JUEVES 2:30 A 5:30PM', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 54, '', '', '', '', '', '', '', '', ''),
+('V07465897', 'COLMENAREZ, JOSE MANUEL', '34434', '2808', 'CENTRO.ESPECIALIDADES.MEDICAS.LOS LEONES.', 'TLF. 2559113', '010', 'LUNES.A.JUEVES.DE.2.PM.A.7PM.', 'PREVIA CITA', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 55, '', '', '', '', '', '', '', '', ''),
+('J-30578019-6', 'LABORATORIO CLINICO MONACO C.A', '', '', 'POLICLINICA CABUDARE', '', '031', 'TLF. 2633312-26332883', '', 'Laboratorio', 1, 2, '', '', '1001-01-01 00:00:00', 56, '', '', '', '', '', '', '', '', ''),
+('J-30543532-4', 'ORTOPEDIA WILLIAM 98.C.A.', '', '', 'CALLE 19/CARR 19 7 AV 20 LOCAL 5 TELF. 2322437.', '', '034', '8 A 12   2 A 6', '', '3', 2, 2, '', '', '1001-01-01 00:00:00', 57, '', '', '', '', '', '', '', '', ''),
+('V01619348', 'ORTIZ PEREZ, CARLOS', '9727', '503', 'CLINICA CONCEPCION TLF. 4422167-4421667', '', '024', '', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 58, '', '', '', '', '', '', '', '', ''),
+('J-30037012-7', 'MUNDO VISION, C.A.', '', '', 'CARRERA 21 ENTRE 8 Y 9.CENTRO.COMERCIAL.LA PIRAMIDE.LOCAL.7', '', '032', '8AM-12M Y 3PM-6PM TELF. 2523206', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 59, '', '', '', '', '', '', '', '', ''),
+('V05932506', 'NAVARRO G., ANTONIO', '36034', '2900', 'CALLE 17/25Y26 EDIF.BMD PISO 1TELF. 2521290-2526533', '', '005', '2PM A 5PM LUNES A VIERNES. ORDEN LLEGADA', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 60, '', '', '', '', '', '', '', '', ''),
+('V07354032', 'LAGARDE FEDERICO', '36031', '2936', 'CALLE 17 ENTRE CARRERAS 25 Y 26 EDIFICIO BMD 1PISO', 'TELEFONOS 252129 Y 2526533', '021', 'LUNES A VIERNES DE 8 A 10 Y DE 3 A 5PM', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 61, '', '', '', '', '', '', '', '', ''),
+('V03804359', 'MARTINEZ NERIO', '20591', '3008', 'GASTROCLINICA URB. DEL ESTE CARRERA 24 CON CALLE 6  2526472', '', '012', 'DE 3 A. 7PM TLF. 2514949, 800-GASTRO', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 62, '', '', '', '', '', '', '', '', ''),
+('J-08514077-8', 'LABORATORIO CLIN.URBINA LAPIEDRA', '', '', 'CALLE 18 EL TOCUYO', '', '031', '', '', 'Laboratorio', 1, 1, '', '', '1001-01-01 00:00:00', 63, '', '', '', '', '', '', '', '', ''),
+('J-30287904-3', 'FARMACIA FARMA INES, C.A.', '', '', 'CARORA', '', '036', '', '', '3', 1, 1, '', '', '1001-01-01 00:00:00', 64, '', '', '', '', '', '', '', '', ''),
+('V04549775', 'GUARDIA YVAN', '23943', '1719', 'CARRERA.16.ENTRE.37.Y.38.CLINICA SAN JUAN.', 'TLF. 4459753-2522433', '021', '10AM.A.12.30M.DE.LUNES.A.VIERNES.', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 65, '', '', '', '', '', '', '', '', ''),
+('V04965008', 'MUJICA,CESAR', '23820', '3466', 'CARR.24 ESQ.CALLE 6 GASTROCLINICA TELF.2514949', '', '012', '8AM-12M Y 3:30PM-6PM ORDEN DE LLEGADA', '', 'Especialista', 2, 1, '', '', '1001-01-01 00:00:00', 66, '', '', '', '', '', '', '', '', ''),
+('J-30231053-9', 'FARMACIA SOCIAL ORELLANA, C.A.', '', '', 'TOCUYO', '', '036', '', '', '3', 1, 1, '', '', '1001-01-01 00:00:00', 67, '', '', '', '', '', '', '', '', ''),
+('J-30088492-9', 'CLILABORATORIO.C.A.', '', '', 'URB.EL PARQUE,TORRE DELTA.OFICINA.2B.Y.2C.', '', '031', '7AM-7PM TLF:2537623-2541355', '', 'Laboratorio', 2, 1, '', '', '1001-01-01 00:00:00', 68, '', '', '', '', '', '', '', '', ''),
+('V02786407', 'MORLES DE CAMACHO.MARIA.', '441', '207', 'URB.LA ROSALEDA C.C LOS CARDONES LOCAL #13 CEL.0145186315', '', '020', 'LUNES-VIERNES 2:30-5:30PM TELEF. 2550849', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 69, '', '', '', '', '', '', '', '', ''),
+('JO-8526071-4', 'UNIDAD.OFTALMOLOGICA.MONTEGO.', '', '', 'CALLE.13.ENTRE CARRERAS.18.Y.19.', '', '032', 'DE 9.A.12AM Y DE.5.A.7PM.', '', 'Especialista', 1, 1, '', '', '1001-01-01 00:00:00', 70, '', '', '', '', '', '', '', '', ''),
+('V04853196', 'AMARO, MARCIAL', '28671', '1813', 'POLI. LA CONCEPCION, CARR. 19 ESQ.CALLE 57 ORDEN DE LLEGADA', 'TLF. 4422167-4421667  ESTUDIOS ESPECIALES C.C. ALFA LOCAL 36', '006', 'LUN.-VIE. 7:30AM-1PM EMERG. 0416-6500593', 'TELF. 2546921-2548661 PREVIA CITA.', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 71, '', '', '', '', '', '', '', '', ''),
+('J-08508972', 'UNIDAD.MEDICINA.FISICA.REH.', '', '', '', '', '000', '', '', 'Especialista', 1, 1, '', '', '1001-01-01 00:00:00', 72, '', '', '', '', '', '', '', '', ''),
+('J-08508977-2', 'UNIDAD DE MEDICINA FISICA Y REH.', '', '', 'CARRERA 21 ENTRE CALLES 55 Y 56', '', '008', '', '', 'Especialista', 1, 1, '', '', '1001-01-01 00:00:00', 73, '', '', '', '', '', '', '', '', ''),
+('J-08506100-2', 'CEMAINCA', '', '', 'CARRERA 19 CON CALLE 57, TLF. (0251) 4421667 AL 4421967', '', '015', '7 AM A 7 PM', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 74, '', '', '', '', '', '', '', '', ''),
+('V11427657', 'SAPELLI, MARIA ROSARIO', '36071', '2957', 'GASTROCLINICA CARR.24/AV.MORAN Y CALLE 6 TELF.7175611', '', '006', 'LUNES A VIERNES 2PM-6PM', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 75, '', '', '', '', '', '', '', '', ''),
+('J-30174980-4', 'CTRO. CLIN. UROLOGICO BARQT. C.A', '', '', 'CARRERA 19 ESQ.CALLE 33 TORRE LA PREVISORA PISO 2 2318555', '', '007', 'PREVIA CITA', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 76, '', '', '', '', '', '', '', '', ''),
+('V05647183', 'VINK, LAURA', '', '', 'POLICLINICA CABUDARE', '', '011', '9AM A 11M  TELF', '', 'Especialista', 1, 1, '', '', '1001-01-01 00:00:00', 77, '', '', '', '', '', '', '', '', ''),
+('V07442104', 'PEROZA, ZULAY', '', '', 'CENTRO PROFESIONAL SILCA AV.20 ESQ. CALLE 17 CONSULTORIO 7', '', '041', 'LUNES A VIERNES  3PM A 6PM. TLF. 2522348', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 78, '', '', '', '', '', '', '', '', ''),
+('V04384309', 'LUGO DE MONTILLA BLANCA', '16637', '906', 'TORRE ESPEC. MEDICAS CARR.21/CALLES 55 Y 56 APTO.5-2', '', '024', 'LUNES A VIERNES DE 3PM A 6PM TELF.445266', '', 'Especialista', 1, 1, '', '', '1001-01-01 00:00:00', 79, '', '', '', '', '', '', '', '', ''),
+('J-30757500-0', 'IMAGENES DIAGNOSTICAS C.A.', '', '', 'CARR.18/23 24 TORRE CAVENDES P-1 CONSULTORI 1-4 TEL.2323866', '', '017', 'LUNES A VIERNES 8AM A 5PM-SABADOS 9-12M', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 80, '', '', '', '', '', '', '', '', ''),
+('V03912113', 'MORON ARAUJO JESUS', '16207', '1875', 'ROSANCAR CARR 31 CON CALLE 20 1-4PM PISO 2 # 16', '', '039', 'POLIC.CABUDARE 4-6PM TLF.2633312-2633210', '', 'Especialista', 1, 1, '', '', '1001-01-01 00:00:00', 81, '', '', '', '', '', '', '', '', ''),
+('V07386825', 'ROJAS ANA MARIA', '40797', '3297', 'CLINICA LOS LEONES 2 PISO  TELF.2559042', '', '039', 'LUNES A VIERNES 3PM-6PM CEL.04167512934', '', 'Especialista', 1, 1, '', '', '1001-01-01 00:00:00', 82, '', '', '', '', '', '', '', '', ''),
+('V09546487', 'JIMENEZ PERAZA ELIZABEHT', '36042', '2944', 'CLINICA RAZETTI TORRE NORTE PISO 6 CONSULT.663 TELF. 2319011', '', '014', 'LUN.-VIER. 7AM-1PM TLF. 2301745-2301752', '', 'Especialista', 2, 1, '', '', '1001-01-01 00:00:00', 83, '', '', '', '', '', '', '', '', ''),
+('V05665826', 'YA?EZ  SAMUEL', '41196', '5148', 'UND.QUIRURG.LOS LEONES    AV. LOS LEONES', '', '022', 'LUNES A JUEV. 3-6PM TEL.2530693-2552904', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 84, '', '', '', '', '', '', '', '', ''),
+('J-30090405-9', 'CRUZ ROJA VENEZOLANA COMITE LARA', '', '', 'URB. PATARATA    TELF. 2542277-2543602', '', '015', 'LUNES A VIERNES 8AM-6PM', '', 'Especialista', 2, 2, '', '', '1001-01-01 00:00:00', 85, '', '', '', '', '', '', '', '', ''),
+('J300904059', 'CRUZ ROJA VENEZOLANA COMITE LARA', '', '', 'URB. PATARATA  TELF.2542277', '', '031', 'LUNES A VIERNES 8AM-6PM', '', 'Especialista', 2, 2, '', '', '1001-01-01 00:00:00', 86, '', '', '', '', '', '', '', '', ''),
+('V-05254237-1', 'LABORATORIO CLINICO GARCES ROMO', '', '', 'CENTRO PROFESIONAL ROSANCAR LOCAL 2 CARR.31 ESQ. CALLE 20', '', '031', 'TODA LA SEMANA Y DIAS FERIADOS 7AM-7PM', '', 'Laboratorio', 1, 1, '', '', '1001-01-01 00:00:00', 87, '', '', '', '', '', '', '', '', ''),
+('V04072427', 'VASQUEZ DE LOPEZ IRMA', '78', '', 'CALLE 13/AV.MADRID Y AU.LARA # AL-48 TELF. 2550162', '', '043', 'LUNES A VIERNES 2:30-6PM', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 88, '', '', '', '', '', '', '', '', ''),
+('V07301452', 'GUIRNALDOS JOSE FRANCISCO', '24746', '1873', 'CENTRO MEDICO DE ONCOLOGIA CALLE 41/AV. 20 Y 21 CONS.N? 3', 'TLF. 4460261-4462761,0414-5253912 Y 80088353 CLAVE 27863', '023', ' LUNES A VIERNES DE 5:30 A 7PM', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 89, '', '', '', '', '', '', '', '', ''),
+('V03243602', 'URIBE JORGE', '9060', '438', 'CLINICA DE MAMAS DE BARQUISIMETO CARR.21 ESQ. CALLE 13', 'PREVIA CITA.', '044', '8AM-12M Y 3PM-5PM  TELF.2522402', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 90, '', '', '', '', '', '', '', '', ''),
+('V04606230', 'RECINE DE HENRIQUEZ SABERIA', '24475', '1494', 'CLINICA RODMONT CALLE 8/CARR 21 Y 22 CONSULT. N? 6', '', '009', 'LUNES-VIERNES 10:30-12:30M', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 91, '', '', '', '', '', '', '', '', ''),
+('J-30806516-1', 'CENTRO OPTICO MEY', '', '', 'CARR.24/CALLES 11 Y 12  TELF. 525165  CEL. 04168508158', '', '032', 'LUN-VIER 8AM-12M  2:30-6:30PM SAB 9-12M', '', 'Especialista', 2, 1, '', '', '1001-01-01 00:00:00', 92, '', '', '', '', '', '', '', '', ''),
+('V14880871', 'ANGULO CARLOS', '40849', '3396', 'CENTRO PROF.ARCA # 1-9 TELF. 2518194', '', '045', 'LUNES-VIERNES 5PM-7PM CEL.04166563149', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 93, '', '', '', '', '', '', '', '', ''),
+('V07070161', 'GUERRA ACOSTA CILENE', '38417', '5381', 'CLINICA LARA CONS.116 TELF. 2632541', 'CRUZ ROJA PATARATA', '022', 'LUNES-VIERNES 9AM-12M CEL.04145203890', 'LUNES-VIERNES 3PM-5PM SABADOS 9AM-12M', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 94, '', '', '', '', '', '', '', '', ''),
+('J-30681071-4', 'ORTOPEDICA KONFORT DE VENEZUELA', '', '', 'CALLE 37/CARR 20 Y 21  TELF. 4463831', 'CARORA CALLE LARA AL LADO DE UNIBANCA N? 10-70', '034', 'LUN- VIERNES 8AM-12M Y 2PM-6PM SAB 9AM2P', 'LUNES A VIERNES DE 9AM-4:30PMAPPEND', 'Especialista', 2, 2, '', '', '1001-01-01 00:00:00', 95, '', '', '', '', '', '', '', '', ''),
+('V15233784', 'CONTRERAS ROBINSON', '43987', '3643', 'AV.ANDRES BELLO ESQ.CARR 32 EDIF.LA CANDELARIA', '', '024', 'LUNES-VIERNES 8AM-1PM CEL.0416-6519860', '', 'Especialista', 1, 1, '', '', '1001-01-01 00:00:00', 96, '', '', '', '', '', '', '', '', ''),
+('G-20000077-5', 'UCLA-COORD. DE NEGOCIOS-MEDICINA', '', '', 'DECANATO DE MEDICINA. AV. LIBERTADOR CON AV. ANDRES BELLO', '2591959 PISO 1', '031', 'LUNES-VIERNES 7AM-12M TELF.2591838-', 'UNIDAD DE INVESTIGACION DE FISIOLOGIA', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 97, '', '', '', '', '', '', '', '', ''),
+('V03086883', 'HAMMOND FRANK', '10747', '525', 'EDIF. TULIPAN 2 PISO AV. LARA C/CALLE 5 URB.NUEVA SEGOVIA', '', '048', 'LUN-VIER 2-6PM PREVIA CITA TEL.2543666', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 98, '', '', '', '', '', '', '', '', ''),
+('V09618033', 'GONCALVES JOSE LUIS', '52417', '4569', 'CENTRO ESP.MEDICAS CABUDARE AV. LA MATA A LADO FARM. REDOMA', '', '024', '8AM-12M 3-7PM TELF.2617073 0416-6502878', '', 'Especialista', 1, 1, '', '', '1001-01-01 00:00:00', 99, '', '', '', '', '', '', '', '', ''),
+('V06228896', 'TOVAR JOSE RAFAEL', '37686', '3115', 'UNIDAD QUIRURGICA LOS LEONES PISO 2 CEL. 0414-5217028', '', '016', '8AM-12M  Y 2PM-6PM  CEL.0416-6504045', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 100, '', '', '', '', '', '', '', '', ''),
+('V11426345', 'CANABAL JOAQUIN', '22202', '1352', 'GASTROCLINICA CARR.24 C/CALLE 6 Y AV.MORAN TELF.7175611', '', '006', 'LUNES A VIERNES.8AM.A.12M.PREVIA CITA', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 101, '', '', '', '', '', '', '', '', ''),
+('V07356040', 'TORRES DE MONTERO NORMA', '36087', '2964', 'TORRE DE ESPEC. CARALI CARR.21/55 Y 56 PISO 1 APTO.1-1', '', '017', 'LUN-MIER-VIE 10AM-12AM SAB.9-12M 4422610', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 102, '', '', '', '', '', '', '', '', ''),
+('V04384030', 'HERNANDEZ FARLEY', '22424', '1380', 'CENTRO ALFA URB.EL PARQUE CALLE MADRID CONS.N?48', '', '022', 'LUNES-VIERNES 1-3PM 0416-8510297', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 103, '', '', '', '', '', '', '', '', ''),
+('V05853136', 'VILCHEZ BOSCAN LEONARDO', '37623', '3169', 'CC.BARQUICENTER PISO 1 OFIC.1-1 TELF. 2331073', '', '039', 'LUNES-VIERNES 4PA-7PM', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 104, '', '', '', '', '', '', '', '', ''),
+('J308642487', 'LAB.CLIN.BACTERIOLOG. EDILAB C.A', '', '', 'CARRERA 19/CALLES 9 Y 10, CENTRO MEDICO FLORIDO.', 'A 90 MTS. DEL RECTORADO DE LA UCLA. TLF. 2522134', '031', '7 AM A 12 M Y 2 PM A 6 PM SAB:8 AM-2 PM', 'TELEFONO:2522134', 'Laboratorio', 1, 2, '', '', '1001-01-01 00:00:00', 105, '', '', '', '', '', '', '', '', ''),
+('J085188193', 'FUNDACION BADAN-LARA', '', '', 'AV. VARGAS CON CARRERA 31, EDF. FUNDACION BADAN-LARA.', '', '049', 'TLF. 2511780 Y 2518223', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 106, '', '', '', '', '', '', '', '', ''),
+('V07319551', 'DIAZ DE MINDIOLA MARIELA', '', '', 'RAZZETI DE BARQTO. TELEF.7105789 CONS. 24 PISO 2 EDIF. ANEXO', '', '009', 'LUNES-VIERNES 9AM-12M Y 3PM-6PM', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 107, '', '', '', '', '', '', '', '', ''),
+('V04566521', 'MONTIEL ELSSY', '28647', '1841', 'UNIDAD QUIRURGICA LOS LEONES PISO 2', 'CENTRO MEDICO QUIRURGICO HOSPITAL PRIVADO PB TELF.4429810', '022', 'LUNES-VIERNES 8AM-1PM TELEF.2552904', 'LUNES-VIERNES 5PM-7PM', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 108, '', '', '', '', '', '', '', '', ''),
+('j-30884371-7', 'RADIOLOGIA SABUX C.A.', '', '', 'AV. ANDRES BELLO C/CARR 32 CENTRO ESP. MEDICAS LA CANDELARIA', '', '015', 'LUN-VIER 7AM-12M 04148560161-04166562524', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 109, '', '', '', '', '', '', '', '', ''),
+('V09605659', 'SEGNINI YENNY', '45975', '3901', 'UNIDAD QUIRURGICA LOS LEONES 2PISO TELF.2559113-2530295', '', '010', 'LUNES-VIERNES 8AM-12M Y 2PM-6PM', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 110, '', '', '', '', '', '', '', '', ''),
+('J-30472254-0', 'CLINICA DE MAMAS MAMMOTEST.C.A', '', '', 'CARRERA 21 CON CALLE 13', '', '040', '8AM A 12M 3PM A 5PM.', '', 'Especialista', 1, 1, '', '', '1001-01-01 00:00:00', 111, '', '', '', '', '', '', '', '', ''),
+('V04379646', 'GARCIA C. VICTOR ALBERTO', '26100', '1471', 'CLINICA ACOSTA ORTIZ CARR.19/30 Y 31 TEL.2328811-2329847', '', '045', 'LUNES-VIERNES 10:30-12M Y 2PM-5PM', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 112, '', '', '', '', '', '', '', '', ''),
+('J-30982223-3', 'CTR. DIAG. IMAGENES TEREPAIMA CA', '', '', 'AV. LA MATA CALLEJON SAN RAFAEL LOCAL N.5 RESID. MARCOR', '', '015', '7-12AM 2-6PM TELF.7180696', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 113, '', '', '', '', '', '', '', '', ''),
+('V11790806', 'BANNA ANTOUN', '28000', '2357', 'POLIC. CONCEPCION CELLE 57/18Y19 TELF.4410777-4421967', 'UNID.QUIR.LOS LEONES', '007', 'LUNES-VIERNES 10:30AM-1PM', 'LUNES-MIERC-VIERNES 2PM-6PM', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 114, '', '', '', '', '', '', '', '', ''),
+('V06461255', 'GOMEZ R. JOSE GREGORIO', '469', '219', 'CRR.21/CALLES 9 Y 10 CIMELARA TELF. 2523219', '', '008', 'LUNES-VIERNES 1PM-6PM ORDEN DE LLEGADA', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 115, '', '', '', '', '', '', '', '', ''),
+('J-30227672-1', 'CLINICA DE MAMAS BARQUISIMET.C.A', '', '2357', 'CARRERA 21 ESQUINA CALLE 13', '', '040', 'DE 8AM A 12M Y DE 3PM A 5PM.', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 116, '', '', '', '', '', '', '', '', ''),
+('V09610288', 'TORREALBA FRANKLIN', '43970', '3628', 'CENTRO MED CANDELARIA AV.ANDRES BELLO C/CRR 32 04143510956', '', '024', 'LUNES-VIERNES 5-7PM SAB-8AM-1PM', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 117, '', '', '', '', '', '', '', '', ''),
+('J-31001719-0', 'LABORATORIO CKINICO SANTA MONICA', '111', '', 'AV.LA SALLE FRENTE AL SEGURO SOCIAL PASTOR OROPEZA PISO 1', 'AL LADO DE LA PANADERIA', '031', 'TLF. 4411255-04164523521-04145181575', '', 'Laboratorio', 1, 2, '', '', '1001-01-01 00:00:00', 118, '', '', '', '', '', '', '', '', ''),
+('J-30090405-9', 'CRUZ ROJA VENEZOLANA COMITE LARA', '', '', 'URB. PATARARATA. TLF. 2542277 - 2543602', '', '049', 'LUNES A VIERNES 8AM - 6PM', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 119, '', '', '', '', '', '', '', '', ''),
+('V04065972', 'HERNANDEZ FALCON  MIRIAN', '29436', '2144', 'CENT.ESP.LA CANDELARIA AV.ANDRES BELLO CARR.32.TEL.7154898', '', '005', 'LUN-MARTES-JUEVES 2-6PM CEL.0414-5218303', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 120, '', '', '', '', '', '', '', '', ''),
+('V-04065972-9', 'OPTICA VISION CLEAR', '', '', 'CENT.ESP.LA CANDELARIA AV.ANDRES BELLO CARR. 32 7154898', '', '032', 'LUNES-VIERNES 8-12M Y 2-6PM', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 121, '', '', '', '', '', '', '', '', ''),
+('V03865885', 'MONSALVE FLORES DOLORES', '12328', '2277', 'AV.LOS LEONES C/CARONI CENTRO EMP.CARACAS PISO 2 OFIC 2-6', '', '024', 'LUNES-VIERNES 3-5:30PM TELF.2548596', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 122, '', '', '', '', '', '', '', '', ''),
+('V05662260', 'ALTUVE PABLO', '76892', '3140', 'CARR.33/24 Y 25 N24-67 TEL.7152900-04168561615', '', '050', 'LUNES A VIERNES 3PM-6PM', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 123, '', '', '', '', '', '', '', '', ''),
+('V05505488', 'LEAL LUZMILA', '37846', '3097', 'CLINICA EL AVILA CARR.17C/CALLE19 TEL.2316107', '', '017', 'LUNES A VIERNES 9AM-12M', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 124, '', '', '', '', '', '', '', '', ''),
+('V06916394', 'HERNANDEZ FERNANDO JOSE', '46216', '5619', 'CLINICA LOS SAUCES AV. CARABOBO C/CARR.27 TELF.2334901', 'POLIC.SAN JAVIER AV.ANDRES BELLO C/AV.LAS PALMAS TEL.7150372', '022', 'LUNES A VIERNES 4PM-6PM CEL.0414-5101164', 'LUNES-MARTES-JUEVES-VIERNES 8AM-11AM', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 125, '', '', '', '', '', '', '', '', ''),
+('V-03746100-4', 'HEMISFERIOS', '', '', 'CARR.1/CALLES 1 Y 1A DETRAS DE EPA ZONA INDUSTRIAL III', '', '008', '8AM-12M Y 2-6PM TEL.4415005-2691256', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 126, '', '', '', '', '', '', '', '', ''),
+('V07445953', 'HERNANDEZ KALAMY', '53700', '4841', 'GAMI AV.ROTARIA/CARR.19 Y 20 TELF.4419411-4412550-4413390', '', '023', 'LUNES A MIERCOLES 2:30-6:30PM SAB.9-1PM', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 127, '', '', '', '', '', '', '', '', ''),
+('J-30853632-6', 'FARMA OPTICA RIO LAMA CA', '', '', 'C. COMERCIAL RIO LAMA 4TA ETEPA FRENTE BURGER KING', '', '032', '9AM-12M Y 3PM-6PM TEL.2544797', '', '3', 1, 2, '', '', '1001-01-01 00:00:00', 128, '', '', '', '', '', '', '', '', ''),
+('J-30305691-1', 'CENTRO MEDICO SAN FRANCISCO C.A.', '', '2357', 'CALLE15 ENTRE 22Y 23', '', '049', '', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 129, '', '', '', '', '', '', '', '', ''),
+('V41945970', 'ALI FERNANDEZ CHIRINOS', '', '', 'HOSPITAL CLINICO LOYOLA, AV. ISAIAS AVILA CON CALLE CASTA?ED', '', '003', 'A, SECTOR LOYOLA TLF. 0252 4212031', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 130, '', '', '', '', '', '', '', '', ''),
+('J300694631', 'HOSPITAL CLINICO LOYOLA, S.A.', '', '', 'AVENIDA ISAIAS AVILA CON CALLE CASTA?EDA SECTOR LOYOLA', '', '049', '0252 4212031 FAX 4212035', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 131, '', '', '', '', '', '', '', '', ''),
+('V07393362', 'CORDERO RAMOS JOHN', '45391', '3766', 'CLINICA SANTA CRUZ TELF.2315122-2315709-2315809', '', '051', 'LUNES-VIERNES 1-4PM PREVIA CITA', '', 'Especialista', 1, 2, '', '', '1001-01-01 00:00:00', 132, '', '', '', '', '', '', '', '', ''),
+('J-30237762-5', 'CLINICA SANTA FE', '', '', '', '', '', '', '', 'Especialista', 1, 0, '', '', '1001-01-01 00:00:00', 133, '', '', '', '', '', '', '', '', ''),
+('J400102464', 'HERO SERVICIOS', 'n1', 'n2', 'EL CERCDO', 'CALLE 1', 'ANA', 'EN LA MAÑANA', 'EN LA TARDE', 'Especialista', 0, 0, '', '', '1001-01-01 00:00:00', 134, 'JUAN.', '0108', '251', '412', 'HEROS SER', 'EL CERC', 'CALL1', '0414', '::1');
+
+
+
+DROP TABLE IF EXISTS `costos`;
+CREATE TABLE `costos` (
+  `idregistro` bigint(10) NOT NULL,
+  `codigo` varchar(12) NOT NULL,
+  `fechadesde` date NOT NULL,
+  `fechahasta` date NOT NULL,
+  `costo` decimal(12,2) NOT NULL,
+  `ipregistro` varchar(60) NOT NULL,
+  `fecharegistro` date NOT NULL,
+  `ipmodifica` varchar(60) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+ALTER TABLE `costos`
+  ADD UNIQUE KEY `idregistro` (`idregistro`);
+
+ALTER TABLE `costos`
+  MODIFY `idregistro` bigint(10) NOT NULL AUTO_INCREMENT;
+
+
+DROP TABLE IF EXISTS `costoslaboratorio`;
+CREATE TABLE IF NOT EXISTS `costoslaboratorio` (
+  `codigo` varchar(20) NOT NULL,
+  `registrocosto` bigint(10) NOT NULL,
+  `costo` decimal(12,2) NOT NULL,
+  `nroregistro` bigint(10) NOT NULL AUTO_INCREMENT,
+  `ip_nuevo` varchar(60) NOT NULL,
+  `fecharegistro` date NOT NULL,
+  `ip_modifica` varchar(60) NOT NULL,
+  `descripcion` varchar(60) NOT NULL,
+  UNIQUE KEY `nroregistro` (`nroregistro`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+
+DROP TABLE IF EXISTS `plantillalaboratorio`;
+CREATE TABLE IF NOT EXISTS `plantillalaboratorio` (
+  `id_registro` bigint(10) NOT NULL AUTO_INCREMENT,
+  `descripcion` varchar(30) NOT NULL,
+  PRIMARY KEY (`id_registro`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+INSERT INTO `plantillalaboratorio` (`id_registro`, `descripcion`) VALUES
+(1, 'HB/HTO'),
+(2, 'CTA Y FORMULA'),
+(3, 'PLAQUETAS'),
+(4, 'VSG'),
+(5, 'PROT C. REACTIVA'),
+(6, 'UREA'),
+(7, 'GLICEMIA'),
+(8, 'CREATININA'),
+(9, 'COLESTEROL'),
+(10, 'HDL-LDL-VLDL'),
+(11, 'TRIGLICERIDOS'),
+(12, 'ACIDO URICO'),
+(13, 'TP'),
+(14, 'TPT'),
+(15, 'T. SANGRIA'),
+(16, 'B. TOTAL Y FRACCIONADA'),
+(17, 'TOXOPLASMOSIS TEST.'),
+(18, 'HIV'),
+(19, 'VDRL'),
+(20, 'GRUPO RH'),
+(21, 'TGO'),
+(22, 'TGP'),
+(23, 'T3'),
+(24, 'T4'),
+(25, 'TSH'),
+(26, 'EX. ORINA'),
+(27, 'CULTIVO Y ANTIBIOGRAMA'),
+(28, 'EX.HECES');
+
+rename table consulta to consulta_sv;
+
+CREATE TABLE `consulta` (
+  `fechconsul` datetime NOT NULL,
+  `cedtitular` varchar(12) NOT NULL,
+  `cedbenefic` varchar(12) NOT NULL,
+  `motivocon` varchar(50) NOT NULL,
+  `codigomedico` varchar(4) NOT NULL,
+  `obsgeneral` longtext NOT NULL,
+  `usuario` varchar(30) NOT NULL,
+  `ip` varchar(30) NOT NULL,
+  `pc` varchar(30) NOT NULL,
+  `realizado` datetime NOT NULL,
+  `anunciado` datetime NOT NULL,
+  `pasocons` tinyint(1) NOT NULL,
+  `fechapaso` datetime NOT NULL,
+  `fechaimpr` datetime NOT NULL,
+  `chequeado` tinyint(1) NOT NULL,
+  `numeroconsulta` bigint(20) NOT NULL,
+  `nombrepaciente` varchar(60) NOT NULL,
+  `fechatermino` datetime NOT NULL,
+  `justificativo` tinyint(1) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+ALTER TABLE `consulta`
+  ADD UNIQUE KEY `numeroconsulta_2` (`numeroconsulta`),
+  ADD KEY `numeroconsulta` (`numeroconsulta`);
+ALTER TABLE `consulta`
+  MODIFY `numeroconsulta` bigint(20) NOT NULL AUTO_INCREMENT;
+
+rename table internos to internos_sv;
+CREATE TABLE `internos` (
+  `codigomedico` varchar(4) NOT NULL,
+  `nombre` varchar(30) NOT NULL,
+  `msas` varchar(5) NOT NULL,
+  `colegio` varchar(5) NOT NULL,
+  `direccion` varchar(40) NOT NULL,
+  `especial` varchar(3) NOT NULL,
+  `horario` varchar(30) NOT NULL,
+  `cedula` varchar(12) NOT NULL,
+  `status` int(1) NOT NULL,
+  `conpoder` int(1) NOT NULL,
+  `atendiendo` int(1) NOT NULL,
+  `disponible` int(1) NOT NULL,
+  `hfdisponibilidad` datetime NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+--
+-- Volcado de datos para la tabla `smobrero_internos`
+--
+
+INSERT INTO `internos` (`codigomedico`, `nombre`, `msas`, `colegio`, `direccion`, `especial`, `horario`, `cedula`, `status`, `conpoder`, `atendiendo`, `disponible`, `hfdisponibilidad`) VALUES
+('0001', 'ARMAO, FRANCES', '14996', '1066', '', 'MED', 'LUNES-VIERNES 7-1 PM', '4271310', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0002', 'MUNOZ, DANILO', '27111', '2660', '', 'MED', '', '5666251', 1, 0, 0, 0, '2016-09-07 16:54:15'),
+('0003', 'FERNANDEZ R.,JOSE E.', '40307', '3259', '', 'MED', '', '5310169', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0004', 'MARTINEZ, FRANCIA', '43981', '3662', '', 'MED', '', '9212207', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0005', 'HERNANDEZ, ELISA', '40891', '3312', '', 'MED', '', '9543371', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0006', 'RODRIGUEZ, ANGELA', '18157', '1032', '', 'PED', '', '3353589', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0007', 'PEROZO D., JUAN J.', '17874', '909', '', 'PED', '', '3864112', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0008', 'JUAREZ, AURA', '15092', '1883', '', 'MED', '', '642444', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0009', 'MARTINEZ, ZURAYMA', '18070', '1031', 'AV. MORA ENTRE AV. LOS ABOGADOS Y CARRER', 'PED', '7:30-10:30', '3843836', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0010', 'TORREALBA, JOSE', '36059', '2904', 'AV. MORAN ENTRE AV. LOS ABOGADOS Y CARRE', 'GIN', '4 PM- 7 PM', '9541210', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0013', 'CORDERO, CARMEN', '37948', '3269', 'AV. MORAN ENTRE AV. LOS ABOGADOS Y CARRE', 'MED', '1PM-7PM', '7387962', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0014', 'PONCE P., ADRIANA', '10885', '11092', 'AV. MORAN ENTRE AV. LOS ABOGADOS Y CARRE', 'ODO', '7AM-1PM', '6551318', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0016', 'BARRIOS, OSCAR', '57010', '5069', 'AV. MORAN /CARR.28A Y AV. ABOGADOS', 'MED', '730AM - 730PM', '7982571', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0018', 'PARGAS, MORAIMA', '40808', '3279', 'AV. MORAN /CARR. 28A Y AV. ABOGADOS', 'MED', '730AM - 730PM', '9558800', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0020', 'COLMENAREZ, HUMBERTO J', '61257', '2320', 'AV. MORAN /CARR. 28A Y AV. ABOGADOS', 'MED', '730AM - 730PM', '12536692', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0021', 'AGUERO, DANILO', '43923', '3784', 'AV MORAN /CARR28A Y AV ABOGADOS', 'MED', '730AM  -  730PM', '6850154', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0022', 'DIAZ DE AGUERO, KENYA', '47343', '4034', 'AV, MORAN /CARR 28A Y AV LOS ABOGADOS', 'MED', '730AM - 730PM', '9601888', 1, 0, 1, 1, '2016-08-26 14:28:16'),
+('0023', 'SAAVEDRA T., IRENE', '36094', '2932', 'AV. MORAN/ CARR.28A Y AV. LOS ABOGADOS', 'PED', '7:00AM-7:00PM', '7577392', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0024', 'GAROFALO C., MARIA M.', '4059', '47515', 'AV. MORAN ENTRE CARR. 28A Y AV. LOS ABOG', 'MED', '7AM A  7PM', '7402548', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0025', 'OJEDA, DIOSA', '52933', '4704', 'AV.MORAN ENTRE CARR.28A Y AV. LOS ABOGAD', 'MED', '7:00AM-7:00PM', '10182143', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0026', 'MOGOLLON W., ANTONIO', '44052', '3649', 'AV. MORAN ENTRE AV. LOS ABOGADOS Y CARRE', 'MED', '4PM-7PM', '7454304', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0027', 'FLORES, ANTONIO', '32326', '2443', 'AV. MORAN /CARR.28A Y AV LOS ABOGADOS', 'MED', '7AM - 7PM', '4070899', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0028', 'VIRGUEZ, NADETZA', '55823', '4943', 'AV. MORAN /CARR 28A Y AV. LOS ABOGADOS', 'MED', '7AM-7PM', '7384630', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0029', 'TAMAYO, MARIA F.', '63193', '5629', 'AV. MORAN ENTRE CARR.28A Y AV.LOS ABOGAD', 'MED', '7AM- 7PM', '12699452', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0030', 'DELGADO M., ORLANDO', '1800', '2023', 'SERVICIOS MEDICOS UCLA', 'ODO', '10AM-1PM', '2457551', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0031', 'ROJAS H., BLANCA', '62954', '5611', 'SERVICIOS MEDICOS UCLA', 'MED', '7AM- 7PM', '13034450', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0032', 'PERDOMO R., MARCO A.', '63691', '2627', 'SERVICIOS MEDICOS UCLA AV. MORAN', 'MED', '7AM-7PM', '12019895', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0033', 'VALLES, SARAHI', '44051', '5019', 'AV. MORAN ENTRE CARR.28A Y AV. LOS ABOGA', 'MED', '7AM-7PM', '9606789', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0034', 'CATARI, MAGALY', '53781', '4817', 'AV. MORAN ENTRE CARR.28A Y AV. LOS ABOGA', 'MED', '7AM-7PM', '7454192', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0035', 'GOZAINE, JUANA', '61990', '2538', 'SMO AV. MORA CON AV LOS ABOGADOS', 'MED', '7AM-7PM', '12250140', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0036', 'HERNANDEZ, VIRMELY', '63025', '5623', 'AV. MORAN', 'MED', '7AM-7PM', '12707051', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0037', 'PINEDA, JUAN C.', '61328', '5450', 'AV. MORAN/CARR.28A Y AV. LOS ABOGADOS', 'MED', '7AM-7PM', '9342512', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0038', 'COLMENAREZ, YUDITH', '34437', '2775', 'AV. LOS MORAN/CARR.28A Y AV. LOS ABOGADO', 'MED', '7AM-7PM', '7350544', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0039', 'ISEA V.,  ANA C.', '63349', '6086', 'AV. MORAN /CARR.28A Y AV. LOS ABOGADOS', 'MED', '7AM-7PM', '12534120', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0040', 'GONZALEZ, ARIANE', '44013', '03697', 'AV. MAORAN/CARR.28A Y AV. LOS ABOGADOS', 'MED', '7AM-7PM', '7391382', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0041', 'LINDA ISTURIZ', '63012', '5633', 'AV. MORANENTRE CARR.28A Y AV. LOS ABOGAD', 'MED', '7AM-7PM', '11787865', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0042', 'CARRILLO MARIANELA', '53611', '4809', '3AV. MORAN /CARR.28A Y AV. LOS ABOGADOS', 'PED', '7AM- 7PM', '9923994', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0043', 'RAMONES, VIRGINIA', '52424', '4565', '', 'MED', '', '7443964', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0044', 'HERRERA, TEODORO', '29067', '', '', 'MED', '', '4803381', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0045', 'BULLONES B. BLANCA', '64753', '5821', 'AV. MORAN', 'MED', '7AM-7PM', '7413105', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0046', 'RAMIREZ DIAZ ANA MARIA', '62485', '5743', 'AV. MORAN ENTRE CARR. 28 A Y AV. LOS ABO', 'MED', '7AM- 7PM', '14181480', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0047', 'SUAREZ XIOMARA', '37845', '3083', 'AV. MORAN ENTRE CARR. 28A Y AV. LOS ABOG', 'MED', '7AM - 7PM', '5567795', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0048', 'MENDOZA JOSY', '47588', '4074', 'AV. MORAN', 'MED', '7AM-7PM', '7425174', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0049', 'VILCHEZ DESIREE', '63057', '5635', 'AV. MORAN', 'MED', '7AM \'7PM', '11432649', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0050', 'PAEZ C., LORENZO', '66543', '5984', 'UCLA', 'MED', '7AM-1PM', '13435846', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0051', 'FERNANDEZ, PETRA', '42272', '3518', 'UCLA', 'PED', '7-10AM', '9600830', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0052', 'MENDEZ MARIA VICTORIA', '63241', '5632', 'AV. MORAN /CARR. 28A Y AV. LOS ABOGADOS', 'MED', '7AM-7PM', '11433686', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0053', 'ESPINOZA BAEZ, EDUARDO', '68944', '6169', 'UCLA AV. MORAN ENTER AV. ABOGADOS Y CARR', 'MED', '', '12526956', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0054', 'GRANDA NASHDALISH', '66544', '05979', 'AV. MORAN  SMO', 'MED', '7AM-7PM', '13644761', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0055', 'PEREZ, KAY', '4376', '42896', 'AV. MORAN ENTRE ABOGADOS Y CARRERA 28A', 'MED', '1-7PM', '7884604', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0056', 'ARANGUREN ANA MARICELA', '34628', '3392', 'AV. MORAN / CARRERA 28A Y AV. LOS ABOGAD', 'PED', '7AM- 7PM', '9177053', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0057', 'LUZARDO, JOSE', '58296', '5197', 'UCLA', 'MED', '1PM-7PM', '10778407', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0058', 'YANEZ,MERCEDES', '57069', '15063', 'UCLA EL TOCUYO', 'MED', '', '6502120', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0059', 'YANEZ TERAN ANA I.', '67161', '6173', 'AV. MORAN ENTRE CARR. 28A Y AV. ABOGADOS', 'MED', '7AM - 7PM', '14175260', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0060', 'GONZALEZ,MARIA JOSE', '65725', '05933', 'UCLA', 'MED', '', '13232008', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0061', 'ALENA RODRIGUEZ', '67312', '2543', 'SMO UCLA', 'MED', '', '13035483', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0062', 'VARGAS, SAMANTA', '55105', '4892', 'UCLA', 'MED', '', '7449389', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0063', 'FERNANDEZ, MARIA A.', '58282', '5157', 'UCLA', 'PED', '1PM-7PM', '11265400', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0064', 'CARRIZO GESCRY', '55758', '4917', 'AV. MORAN', 'MED', '7AM-7PM', '10472838', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0065', 'ANZOLA, NELSON', '60518', '5386', 'AV. MORAN ENTRE AV. ABOGADOS Y CARR 28A', 'MED', '7AM-1PM', '10778184', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0066', 'JIMENEZ, AGUEDA', '52375', '', '4677', 'PED', '7AM-7PM', '7820460', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0067', 'SANDRA CECILIA MARTINEZ', '68396', '6125', 'SMO UCLA', 'MED', '1-7PM', '15447548', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0068', 'NORELEN ALICIA FLORES', '49037', '4307', 'SMO UCLA', 'MED', '7 1', '7981876', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0069', 'ANA LUCIA ALVARADO', '67153', '2646', 'AV MORAN SMO', 'MED', '7:OO AM - 7:OO PM', '13.644.478', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0070', 'ZAMBRANO,OLGA', '50010', '3381', 'TOCUYO', 'MED', '', '4961659', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0071', 'SOPHIA MEZA', '69423', '2734', 'SMO UCLA', 'MED', '7AM 7PM', '15031895', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0072', 'CASTRO CELIA', '29473', '11981', 'UCLA SMO', 'MED', '7AM-7PM', '5255339', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0073', 'YADIRA JOSEFINA PEREIRA', '48790', '4205', 'SMO UCLA', 'MED', '4PM-7PM', '7420414', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0074', 'CUEVAS NOVOAS SUSAN', '70449', '6285', 'AV.MORAN', 'MED', '', '14591972', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0075', 'CORDONES  XIOMARA', '22144', '1454', 'AV. MORAN', 'MED', '7AM-7PM', '4386124', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0076', 'ESPINOZA BELINDA', '53641', '4779', 'SMO- UCLA', 'PED', '7AM-7PM', '10773226', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0077', 'JOSE ALEJANDRO MATUTE', '65612', '6186', 'SMO UCLA', 'MED', '7AM-1PM', '14175441', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0078', 'MEDINA LISBETH CAROLINA', '71838', '', 'AV. MORAN CON CARRERA 28A  Y AV. LOS ABO', 'MED', '7AM-7PM', '15778987', 0, 1, 0, 0, '1000-01-01 00:00:00'),
+('0079', 'QUERO B.,MARIANA', '70926', '6295', 'AV MORAN ENTRE ABOGADOS Y 28A', 'MED', '7AM-7PM', '14825364', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0080', 'MARIA AUXILIADORA VEZGA', '70257', '6298', 'AV MORAN CON CARRERA 28A', 'MED', '1PM A 7 PM', '14401423', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0081', 'CELISNEL DELIMA', '71506', '6403', 'SMO UCLA AV MORAN', 'MED', '7 AM 7 PM', '15728069', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0082', 'JHOVAIRA GILER', '71615', '', 'SMO AV MORAN', 'MED', '7 AM 7 PM', '15776929', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0083', 'FRANCISCO PERAZA', '36626', '3025', 'SMO UCLA AV MORAN', 'MED', '1 PM 7PM', '7453687', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0084', 'SANDOVAL Q.,MARITZA A.', '71690', '6433', 'UCLA AV. MORAN', 'MED', '7AM-1PM', '15583281', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0085', 'MENDOZA,ALEXIS', '30279', '2477', 'AV MORAN ENTRE ABOGADOS Y 28A', 'MED', '7AM-10AM', '5258784', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0086', 'ISABEL CAROLINA AMARO', '72363', '2864', 'SMO UCLA AV MORAN', 'MED', '7AM 7 PM', '15351590', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0087', 'JOSE PEREZ MEDINA', '15446', '692', 'SMO UCLA AV MORANAPPEND', 'MED', '', '2536328', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0088', 'LUGO LEON, DANIELLA', '73255', '6615', 'UCLA AV MORNA', 'MED', '1PM-7PM', '16089567', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0089', 'SALAS OSCAR GUSTAVO', '60005', '4389', 'AV. MORAN', 'MED', '7AM-7PM', '9559279', 0, 0, 0, 0, '1000-01-01 00:00:00'),
+('0090', 'GONZALEZ FRANCISCO', '36097', '4903', 'SMO AV. MORAN', 'MED', '7AM-7PM', '6362814', 0, 0, 0, 0, '1000-01-01 00:00:00');
+
+--
+-- Índices para tablas volcadas
+--
+
+ALTER TABLE `internos`
+  ADD PRIMARY KEY (`codigomedico`),
+  ADD UNIQUE KEY `cedula` (`cedula`),
+  ADD KEY `coducla` (`codigomedico`);
+
+
+
+DROP TABLE IF EXISTS `diagnosticos`;
+CREATE TABLE IF NOT EXISTS `diagnosticos` (
+  `nrocon_diagnostico` decimal(10,0) NOT NULL,
+  `descripcion_diag` longtext NOT NULL,
+  `observac_diagnos` longtext NOT NULL,
+  `ip` varchar(30) NOT NULL,
+  `pc` varchar(30) NOT NULL,
+  `realizado` datetime NOT NULL,
+  `notifica` varchar(30) NOT NULL,
+  `primeravez` int(1) NOT NULL,
+  `id_diagnostico` bigint(10) NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`id_diagnostico`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+ALTER TABLE `diagnosticos` ADD INDEX(`nrocon_diagnostico`);
+
+
+
+DROP TABLE IF EXISTS `alergias`;
+CREATE TABLE IF NOT EXISTS `alergias` (
+  `numcon_alergias` decimal(10,0) NOT NULL,
+  `alergicoa` varchar(30) NOT NULL,
+  `observacion` longtext NOT NULL,
+  `ip` varchar(30) NOT NULL,
+  `realizado` datetime NOT NULL,
+  `registro` bigint(20) NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`registro`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+
+DROP TABLE IF EXISTS `informe`;
+CREATE TABLE IF NOT EXISTS `informe` (
+  `nrocon_informe` bigint(10) NOT NULL,
+  `cedulatitular` varchar(12) NOT NULL,
+  `cedulabeneficiario` varchar(20) NOT NULL,
+  `codigomedico` varchar(10) NOT NULL,
+  `observacion` longtext NOT NULL,
+  `ip` varchar(40) NOT NULL,
+  `realizado` datetime NOT NULL,
+  `registro` bigint(20) NOT NULL AUTO_INCREMENT,
+  `dx` longtext NOT NULL,
+  `fechainforme` datetime NOT NULL,
+  PRIMARY KEY (`registro`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+
+DROP TABLE IF EXISTS `justificativo`;
+CREATE TABLE IF NOT EXISTS `justificativo` (
+  `numcon_justificativo` bigint(10) NOT NULL,
+  `fechajustificativo` datetime NOT NULL,
+  `cedulatitular` varchar(12) NOT NULL,
+  `cedulabeneficiario` varchar(20) NOT NULL,
+  `motivojustificativo` varchar(50) NOT NULL,
+  `codigomedico` varchar(10) NOT NULL,
+  `observacion` longtext NOT NULL,
+  `desde` datetime NOT NULL,
+  `hasta` datetime NOT NULL,
+  `ip` varchar(40) NOT NULL,
+  `realizado` datetime NOT NULL,
+  `registro` bigint(20) NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`registro`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+DROP TABLE IF EXISTS `referencias`;
+CREATE TABLE IF NOT EXISTS `referencias` (
+  `numcon_referencia` decimal(10,0) NOT NULL,
+  `id_registro` bigint(10) NOT NULL AUTO_INCREMENT,
+  `codmed` varchar(12) NOT NULL,
+  `observacion` longtext NOT NULL,
+  `realizarse` longtext NOT NULL,
+  `ip` varchar(40) NOT NULL,
+  `realizado` datetime NOT NULL,
+  `montoconsumo` decimal(12,2) NOT NULL,
+  `cedulatitular` varchar(20) NOT NULL,
+  `cedulabeneficiario` varchar(20) NOT NULL,
+  `tipo` varchar(20) NOT NULL,
+  `registrooriginal` bigint(20) NOT NULL,
+  `examende` varchar(20) NOT NULL,
+  `especialista` varchar(20) NOT NULL,
+  UNIQUE KEY `id_registro` (`id_registro`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+
+DROP TABLE IF EXISTS `reposos`;
+CREATE TABLE IF NOT EXISTS `reposos` (
+  `nrocon_reposo` bigint(10) NOT NULL,
+  `fechareposo` datetime NOT NULL,
+  `cedulatitular` varchar(20) NOT NULL,
+  `cedulabeneficiario` varchar(20) NOT NULL,
+  `codigomedico` varchar(4) NOT NULL,
+  `fechaincorporacion` date NOT NULL,
+  `observacion` longtext NOT NULL,
+  `desde` date NOT NULL,
+  `hasta` date NOT NULL,
+  `ip` varchar(40) NOT NULL,
+  `realizado` datetime NOT NULL,
+  `registro` bigint(20) NOT NULL AUTO_INCREMENT,
+  `volveraconsulta` tinyint(1) NOT NULL,
+  PRIMARY KEY (`registro`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+ALTER TABLE `referencias` CHANGE `examende` `examende` VARCHAR(30) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL;
+-- --------------------------------------------------------
+
+DROP TABLE IF EXISTS `signos`;
+CREATE TABLE IF NOT EXISTS `signos` (
+  `numcon_signos` decimal(10,0) NOT NULL,
+  `peso` varchar(20) NOT NULL,
+  `estatura` varchar(20) NOT NULL,
+  `temperatura` varchar(20) NOT NULL,
+  `presionart` varchar(20) NOT NULL,
+  `pulso` varchar(20) NOT NULL,
+  `tiposangre` varchar(20) NOT NULL,
+  `observacion` longtext NOT NULL,
+  `ip` varchar(40) NOT NULL,
+  `realizado` datetime NOT NULL,
+  `registro` bigint(20) NOT NULL AUTO_INCREMENT,
+  UNIQUE KEY `registro` (`registro`)
+) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+
+DROP TABLE IF EXISTS `tratamiento`;
+CREATE TABLE IF NOT EXISTS `tratamiento` (
+  `nrocon_recipe` bigint(10) NOT NULL,
+  `codigomedico` varchar(4) NOT NULL,
+  `rp` longtext NOT NULL,
+  `ind` longtext NOT NULL,
+  `ip` varchar(30) NOT NULL,
+  `pc` varchar(30) NOT NULL,
+  `realizado` datetime NOT NULL,
+  `id_registro` bigint(10) NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`id_registro`)
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+
+
+DROP TABLE IF EXISTS `cupo`;
+CREATE TABLE IF NOT EXISTS `cupo` (
+  `fecha` varchar(4) NOT NULL,
+  `titular` decimal(12,2) NOT NULL,
+  `beneficiario` decimal(12,2) NOT NULL,
+  `grupo` decimal(12,2) NOT NULL,
+  `registrado` date NOT NULL,
+  UNIQUE KEY `smobrero_cupo` (`fecha`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--
+-- Volcado de datos para la tabla `cupo`
+--
+
+INSERT INTO `cupo` (`fecha`, `titular`, `beneficiario`, `grupo`, `registrado`) VALUES
+('2016', '8000.00', '0.00', '0.00', '2016-08-30');
+
+
+DROP TABLE IF EXISTS `configuracion`;
+CREATE TABLE IF NOT EXISTS `configuracion` (
+  `idempresa` varchar(100) NOT NULL,
+  `cod_empr` varchar(4) NOT NULL,
+  `nombr1_empr` varchar(50) NOT NULL,
+  `nombr2_empr` varchar(50) NOT NULL,
+  `alias_empr` varchar(12) NOT NULL,
+  `patron_empr` varchar(20) NOT NULL,
+  `direc_empr` varchar(50) NOT NULL,
+  `cod_postal` varchar(10) NOT NULL,
+  `telefono` varchar(11) NOT NULL,
+  `tele_fax` varchar(11) NOT NULL,
+  `am_prof_bs` decimal(12,2) NOT NULL,
+  `am_empl_bs` decimal(12,2) NOT NULL,
+  `am_ucla_bs` decimal(12,2) NOT NULL,
+  `am_empr_bs` decimal(12,2) NOT NULL,
+  `am_prof_po` decimal(4,2) NOT NULL,
+  `am_empl_po` decimal(4,2) NOT NULL,
+  `am_ucla_po` decimal(4,2) NOT NULL,
+  `am_empr_po` decimal(4,2) NOT NULL,
+  `cuota_adm` decimal(12,2) NOT NULL,
+  `fondo_res` decimal(12,2) NOT NULL,
+  `fondo_cont` decimal(12,2) NOT NULL,
+  `fech_perio` datetime NOT NULL,
+  `fech_ejerc` datetime NOT NULL,
+  `ul_ap_prof` datetime NOT NULL,
+  `ul_ap_empl` datetime NOT NULL,
+  `ul_ap_empr` datetime NOT NULL,
+  `por_dispon` decimal(5,2) NOT NULL,
+  `ultcod_uso` varchar(6) NOT NULL,
+  `rif` varchar(20) NOT NULL,
+  PRIMARY KEY (`idempresa`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+
+INSERT INTO `configuracion` (`idempresa`, `cod_empr`, `nombr1_empr`, `nombr2_empr`, `alias_empr`, `patron_empr`, `direc_empr`, `cod_postal`, `telefono`, `tele_fax`, `am_prof_bs`, `am_empl_bs`, `am_ucla_bs`, `am_empr_bs`, `am_prof_po`, `am_empl_po`, `am_ucla_po`, `am_empr_po`, `cuota_adm`, `fondo_res`, `fondo_cont`, `fech_perio`, `fech_ejerc`, `ul_ap_prof`, `ul_ap_empl`, `ul_ap_empr`, `por_dispon`, `ultcod_uso`, `rif`) VALUES
+('FUNSOUCLA', '', 'Fundacion Social de los Obreros de la Universidad', 'Centroccidental "Lisandro Alvarado"', 'FUNSOUCLA', '', 'Avda. Moran', '', '0251-252482', '0251-252482', '0.00', '0.00', '0.00', '0.00', '0.00', '0.00', '0.00', '0.00', '0.00', '0.00', '0.00', '1000-01-01 00:00:00', '2009-01-01 00:00:00', '1000-01-01 00:00:00', '1000-01-01 00:00:00', '1000-01-01 00:00:00', '0.00', '', 'J-30575626-0');
